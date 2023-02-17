@@ -75,8 +75,7 @@ async function main() {
 
   console.log(`Adding DAI and UNI liquidity`)
   // Adding Liquidity for DAI and UNI
-  Uniswap.connect(impersonatedSigner).addLiquidity(tx1.tokenA, tx1.tokenB, tx1.amountADesired, tx1.amountBDesired, tx1.amountAMin, tx1.amountBMin, tx1.to, tx1.deadline);
-
+  await Uniswap.connect(impersonatedSigner).addLiquidity(tx1.tokenA, tx1.tokenB, tx1.amountADesired, tx1.amountBDesired, tx1.amountAMin, tx1.amountBMin, tx1.to, tx1.deadline);
 
 
 

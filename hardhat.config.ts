@@ -19,6 +19,9 @@ const config: HardhatUserConfig = {
       //@ts-ignore
       accounts: [process.env.ACC1, process.env.ACC2, process.env.ACC3],
     }
+  },
+  etherscan: {
+    apiKey: process.env.ETHERSCAN_API_KEY
   }
 };
 
