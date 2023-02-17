@@ -1,0 +1,18 @@
+{ 
+  "description": "This is a collection of unique cars minted on the blockchain.",
+  "external_url": "https://ipfs.filebase.io/ipfs/QmYfmS5JrEgjmYfHnLDzbKnJBs7zYqbsKgx3iw9VdwKuJD",
+  "image": "https://ipfs.filebase.io/ipfs/QmYfmS5JrEgjmYfHnLDzbKnJBs7zYqbsKgx3iw9VdwKuJD",
+  "name": "Za Cars", 
+  "attributes": [
+        {
+        "colour": "Red",
+        "year": "2023",
+        "brand": "Ford"
+        },
+        {
+        "colour": "Black",
+        "year": "2025",
+        "brand": "Lamboughini"
+        }
+]
+  }

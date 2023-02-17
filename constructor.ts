@@ -1,0 +1,1 @@
+module.exports = ["W3NFT", "W3NFT"]
