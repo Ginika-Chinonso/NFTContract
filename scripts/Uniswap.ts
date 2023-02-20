@@ -9,6 +9,7 @@ async function main() {
   const WETH = "0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2";
   const UNI = "0x1f9840a85d5aF5bf1D1762F925BDADdC4201F984";
   const IMPACC = "0x748dE14197922c4Ae258c7939C7739f3ff1db573";
+  const UNIFACTORYADDRESS= "0x5C69bEe701ef814a2B6a3EDD4B1652CB9cc5aA6f"
 
 
   // Getting contract implementation
@@ -17,6 +18,14 @@ async function main() {
   const DaiContract = await ethers.getContractAt("IToken", DAI);
   const WETHContract = await ethers.getContractAt("IToken", WETH);
   const UniContract = await ethers.getContractAt("IToken", UNI);
+  const UniFactoryContract = await ethers.getContractAt("IUnifactory", UNIFACTORYADDRESS);
+
+  // Get DAI and UNI pair address
+  const DAIUNIADDR = await UniFactoryContract.getPair(DAI, UNI);
+
+  // Get pair instance
+  const DAIUNIContract = await ethers.getContractAt("IPair", DAIUNIADDR);
+
   
 
   // Setting up impersonator
@@ -55,7 +64,7 @@ async function main() {
   const tx3 = {
       tokenA: DAI,
       tokenB: UNI,
-      liquidity: ethers.utils.parseEther("0"),
+      liquidity: ethers.utils.parseEther("15"),
       amountAMin: 0,
       amountBMin: 0,
       to: impersonatedSigner.address,
@@ -73,14 +82,26 @@ async function main() {
   await DaiContract.connect(impersonatedSigner).approve(ROUTER, tx1.amountADesired)
   await UniContract.connect(impersonatedSigner).approve(ROUTER, tx1.amountBDesired)
 
+  console.log(`DAI balance before adding liquidity: ${await DaiContract.balanceOf(impersonatedSigner.address)}`);
+  console.log(`UNI balance before adding liquidity: ${await UniContract.balanceOf(impersonatedSigner.address)}`);
+
   console.log(`Adding DAI and UNI liquidity`)
   // Adding Liquidity for DAI and UNI
   await Uniswap.connect(impersonatedSigner).addLiquidity(tx1.tokenA, tx1.tokenB, tx1.amountADesired, tx1.amountBDesired, tx1.amountAMin, tx1.amountBMin, tx1.to, tx1.deadline);
+
+  console.log( `DAI balance after adding liquidity: ${await DaiContract.balanceOf(impersonatedSigner.address)}`);
+  console.log(`UNI balance after adding liquidity: ${await UniContract.balanceOf(impersonatedSigner.address)}`);
 
 
 
   // Second Transaction
   console.log(`Second Transaction`)
+
+
+  console.log(`DAI balance before adding liquidity: ${await DaiContract.balanceOf(impersonatedSigner.address)}`);
+  console.log(`ETH balance before adding liquidity: ${await ethers.provider.getBalance(impersonatedSigner.address)}`);
+
+
   // Approving DAI
   console.log(`Approving token`)
   await DaiContract.connect(impersonatedSigner).approve(ROUTER, tx2.amountTokenDesired)
@@ -90,13 +111,34 @@ async function main() {
   Uniswap.connect(impersonatedSigner).addLiquidityETH(tx2.token, tx2.amountTokenDesired, tx2.amountTokenMin, tx2.amountETHMin, tx2.to, tx2.deadline, {value: tx2.value})
 
 
+  console.log( `DAI balance after adding liquidity: ${await DaiContract.balanceOf(impersonatedSigner.address)}`);
+  console.log(`ETH balance after adding liquidity: ${await ethers.provider.getBalance(impersonatedSigner.address)}`);
+
+
+
 
 
   // Third Transaction
   console.log(`Third transaction`)
+
+
+  console.log( `DAI balance before removing liquidity: ${await DaiContract.balanceOf(impersonatedSigner.address)}`);
+  console.log(`UNI balance before removing liquidity: ${await UniContract.balanceOf(impersonatedSigner.address)}`);
+
+
+  // Getting DAI-UNI Liquidity
+  const Liq = await DAIUNIContract.balanceOf(impersonatedSigner.address)
+  console.log(`Signers balance is: ${Liq}`) //32 239 184 546 873 652 058
+
+
   // Removing Liquidity for DAI and UNI
   console.log(`Removing DAI and UNI liquidity`)
+  await DAIUNIContract.connect(impersonatedSigner).approve(ROUTER, Liq)
   Uniswap.connect(impersonatedSigner).removeLiquidity(tx3.tokenA, tx3.tokenB, tx3.liquidity, tx3.amountAMin, tx3.amountBMin, tx3.to, tx3.deadline)
+
+  console.log( `DAI balance after removing liquidity: ${await DaiContract.balanceOf(impersonatedSigner.address)}`);
+  console.log(`UNI balance after removing liquidity: ${await UniContract.balanceOf(impersonatedSigner.address)}`);
+
   
 }
 
