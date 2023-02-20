@@ -128,7 +128,7 @@ async function main() {
 
   // Getting DAI-UNI Liquidity
   const Liq = await DAIUNIContract.balanceOf(impersonatedSigner.address)
-  console.log(`Signers balance is: ${Liq}`) //32 239 184 546 873 652 058
+  console.log(`Signers Liquidity balance is: ${Liq}`) //32 239 184 546 873 652 058
 
 
   // Removing Liquidity for DAI and UNI
